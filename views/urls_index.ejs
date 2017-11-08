@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>TinyApp: a uRL shortening clone</title>
+</head>
+<body>
+
+  <header>
+      <% include ../partials/_header %>
+  </header>
+
+  <h1>Check out this sweet TinyURL clone</h1>
+  <p>Groovy, huh?</p>
+  <ul> Here are some long-ass URLs and their short versions:
+    <% for (key in urls) { %>
+        <li><%= key %> - <%= urls[key] %></li>
+    <% }; %>
+  </ul>
+  <p>
+
+</body>
+</html>
