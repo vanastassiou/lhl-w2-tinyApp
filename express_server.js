@@ -35,7 +35,7 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
-// Express understands : as prepending variables
+// Express understands : as prepended to a variable
 app.get("/urls/:id", (req, res) => {
   let templateVars = { shortURL: req.params.id };
   res.render("urls_show", templateVars);
@@ -52,8 +52,16 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-// @jensen recommends "shortid" package
+// Add a POST route that removes a URL resource: POST /urls/:id/delete
+// (You will probably need Javascript's delete operator to remove the URL)
+app.post("/urls/:id/delete", (req, res) => {
+  urlDatabase.removeFromObjectByKey(`${id}`);
+  res.send(`Deleted ${id}`);
+  // Then redirect the client back to the urls_index page ("/urls").
+  res.redirect("/urls");
+});
 
+// @jensen recommends "shortid" package
 function generateRandomString() {
   let result = Math.random().toString(36).substring(2,8);
   return result;
