@@ -55,8 +55,9 @@ app.get("/u/:shortURL", (req, res) => {
 // Add a POST route that removes a URL resource: POST /urls/:id/delete
 // (You will probably need Javascript's delete operator to remove the URL)
 app.post("/urls/:id/delete", (req, res) => {
-  urlDatabase.removeFromObjectByKey(`${id}`);
-  res.send(`Deleted ${id}`);
+  let deleteId = urlDatabase[req.params.id];
+  delete deleteId;
+  res.send(`Deleted ${deleteId}`);
   // Then redirect the client back to the urls_index page ("/urls").
   res.redirect("/urls");
 });
