@@ -60,11 +60,10 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls");
 });
 
-// Add a POST route that updates a URL resource; POST /urls/:id
+// Add a POST route that updates an existing URL resource; POST /urls/:id
 app.post("/urls/:id", (req, res) => {
-  let newUrlKey = generateRandomString();
-  urlDatabase.newUrlKey = `${id}`;
-  res.send(`Added ${id]} as ${newUrlKey}`);
+  urlDatabase[req.params.id] = req.body.longURLName;
+  res.redirect("/urls");
 });
 
 // @jensen recommends "shortid" package

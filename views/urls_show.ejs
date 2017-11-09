@@ -10,13 +10,7 @@
   <header>
       <% include partials/_header %>
   </header>
-
-  <ul> Here are the full URLs:
-    <% for (key in urls) { %>
-        <li><%= urls[key] %></li>
-    <% }; %>
-  </ul>
-  <form method="POST">
-    URL to shorten: <input type="text" name="longURLName"> <button type="submit">Shorten!</button></form>
+  <form method="POST" action ="/urls/<%= shortURL %>">
+    Update this tiny URL: <input type="text" name="longURLName"> <button type="submit">UPDATIFY!</button></form>
 </body>
 </html>
