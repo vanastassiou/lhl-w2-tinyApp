@@ -31,19 +31,28 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 })
 
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
+
+// Express understands : as prepending variables
 app.get("/urls/:id", (req, res) => {
   let templateVars = { shortURL: req.params.id };
   res.render("urls_show", templateVars);
-});
-
-app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
 });
 
 app.post("/urls", (req, res) => {
   console.log(req.body);  // debug statement to see POST parameters
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
+
+// Remember -- can access value of key in object with objectName[keyName]
+app.get("/u/:shortURL", (req, res) => {
+  let longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
+});
+
+// @jensen recommends "shortid" package
 
 function generateRandomString() {
   let result = Math.random().toString(36).substring(2,8);
