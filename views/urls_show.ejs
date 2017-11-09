@@ -2,13 +2,10 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>TinyApp: a uRL shortening clone</title>
-</head>
 <body>
-
   <header>
       <% include partials/_header %>
+      <p>Nice to see you around, <%= username%>!</p>
   </header>
   <form method="POST" action ="/urls/<%= shortURL %>">
     Update this tiny URL: <input type="text" name="longURLName"> <button type="submit">UPDATIFY!</button></form>

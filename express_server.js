@@ -1,24 +1,29 @@
+// Importing modules
+
 const express = require("express");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const app = express();
 const PORT = process.env.PORT || 8080; // default port 8080
-const bodyParser = require("body-parser");
-
-app.use(bodyParser.urlencoded({extended: true}));
-
-app.set("view engine", "ejs")
-
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
+// Calling middleware
+
+app.set("view engine", "ejs")
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
+
+
+// Route definitions to follow
+
 app.get("/", (req, res) => {
-  res.end("This is the root directory of the website! We actually don't want you to be here. You should go elsewhere...BUT WHERE??");
+  res.end("This is the root directory of the website. You should go elsewhere...BUT WHERE??");
+  res.redirect(longURL);
 });
 
-app.listen(PORT, () => {
-  console.log(`TinyURL clone app listening on port ${PORT}!`);
-});
 
 // Spits out urlDatabase object contents in JSON format.
 app.get("/urls.json", (req, res) => {
@@ -41,29 +46,40 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-app.post("/urls", (req, res) => {
-  console.log(req.body);  // debug statement to see POST parameters
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
-});
+// app.post("/urls", (req, res) => {
+//   console.log(req.body);
+//   res.send("Ok");
+// });
 
-// Remember -- can access value of key in object with objectName[keyName]
+// Support for redirecting visitors to shortURL to longURL
 app.get("/u/:shortURL", (req, res) => {
+  //req.params: a property that is an object containing properties mapped to “params”. E.g. given route /user/:name, “name” property of the object is available as req.params.name. Defaults to {}.
   let longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
 
-// Add a POST route that removes a URL resource: POST /urls/:id/delete
-// (You will probably need Javascript's delete operator to remove the URL)
+// Support for deleting URLs from database
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
   console.log(urlDatabase);
   res.redirect("/urls");
 });
 
-// Add a POST route that updates an existing URL resource; POST /urls/:id
+// Support for updating value of existing shortURL
 app.post("/urls/:id", (req, res) => {
   urlDatabase[req.params.id] = req.body.longURLName;
   res.redirect("/urls");
+});
+
+//Modify routes on server in to render templates properly.
+// Pass username to each EJS template to verify user is logged in and what username is
+
+app.post('/login', (req, res) => {
+  const username = req.body.username;
+  const inputPass = req.body.inputPass;
+  res.cookie('username', username);
+  console.log;
+  res.redirect('/urls');
 });
 
 // @jensen recommends "shortid" package
@@ -72,6 +88,6 @@ function generateRandomString() {
   return result;
 }
 
-app.get("/ohai", (req, res) => {
-  res.end("<html><body>OMGOMGOMGOMG I'M IN SPACE</body></html>\n");
+app.listen(PORT, () => {
+  console.log(`Bingeley bingeley beep! TinyURL clone app listening on port ${PORT}.`);
 });

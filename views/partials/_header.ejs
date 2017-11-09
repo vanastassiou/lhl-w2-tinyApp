@@ -1,19 +1,16 @@
-<!-- views/partials/header.ejs -->
-
-<nav class="navbar navbar-default" role="navigation">
-<div class="container-fluid">
-
-    <div class="navbar-header">
-        <a class="navbar-brand" href="#">
-            <span class="glyphicon glyphicon glyphicon-tree-deciduous"></span>
-            EJS Is Fun
-        </a>
-
-        <ul class="nav navbar-nav">
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About</a></li>
-        </ul>
-    </div>
-
+<!-- views/partials/_header.ejs -->
+<div class="navbar-header">
+  <h1>Shorten that URL!</h1>
+    <form action="/login" method="POST">
+    <p>
+      <label for="username">Who dis?</label>
+      <input type="text" id="username" name="username" placeholder="Identify yourself!"<br>
+    </p>
+    <p>
+      <label for="code">Prove it: </label>
+      <input type="password" id="inputPass" name="inputPass" placeholder="Show your creds" /><br>
+    </p>
+    <input type="submit" value="sup">
+    </form>
+    </a>
 </div>
-</nav>
