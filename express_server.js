@@ -18,14 +18,15 @@ const userDatabase = [
   {
     "name" : "Weebl",
     "uid": "1",
-    "password": "1234"
+    "password": "1234",
+    "email": "weebl@weebl.com"
   },
   {
     "name": "Bob",
     "uid": "2",
-    "password": "stringypassword75"
+    "password": "stringypassword75",
+    "email" : "bob@weebl.com"
   },
-
 ]
 
 // Calling middleware
@@ -49,6 +50,8 @@ app.get("/urls.json", (req, res) => {
 });
 // Congratulatons! You just made an API!
 
+//Task 6: Use New Cookie in the _header. Change your templateVars (multiple endpoints) to pass in a user (object) property instead of the previously implemented username (string) prop
+
 app.get("/urls", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
@@ -59,8 +62,12 @@ app.get("/urls", (req, res) => {
 })
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
-});
+  let templateVars = {
+    username: req.cookies.username,
+    loggedIn: (req.cookies.username) ? true : false
+  };
+  res.render("urls_new", templateVars);
+})
 
 // Express understands : as prepended to a variable
 app.get("/urls/:id", (req, res) => {
@@ -93,7 +100,15 @@ app.post("/urls/:id", (req, res) => {
   res.redirect("/urls");
 });
 
-// Support for login cookie
+//Task 7: Create a Login Page
+//Create a GET /login endpoint, which returns a new login page (you'll have to create it). Move the entire login form from the _header partial into the new login page, then modify the form to ask for an email and password.
+
+// Modify the existing POST /login endpoint so that it uses the new form data and sets the user_id cookie on successful login. In order to do this, the endpoint will first need to try and find a user that matches the email submitted via the login form. If a user with that e-mail cannot be found, return a response with a 403 status code.
+
+//If a user with that e-mail address is located, compare the password given in the form with the existing user's password. If it does not match, return a response with a 403 status code.
+
+//If both checks pass, set the user_id cookie with the matching user's random ID, then redirect to /.
+
 app.post('/login', (req, res) => {
   const username = req.body.username;
   const inputPass = req.body.inputPass;
@@ -102,14 +117,29 @@ app.post('/login', (req, res) => {
     res.cookie("username", user.name);
     res.redirect('/urls');
   } else {
-    res.redirect('login');
+    res.redirect('/login');
   }
 });
 
-
-app.post('/Logout', (req, res) => {
+app.post('/logout', (req, res) => {
   res.clearCookie("username");
   res.redirect('/urls');
+});
+
+app.get("/register", (req, res) => {
+  res.render("register", templateVars);
+})
+
+app.post("/register", (req, res) => {
+  let newUserId = generateRandomString();
+  let newUserObject = { id: newUserId; email: req.body.email; password: req.body.password };
+  userDatabase.push(newUserObject);
+  res.cookie('user_id', user[newUserId]);
+  res.redirect('/urls');
+// Task 5: Handle Registration Errors
+// if email or pass are empty, reply with 400
+// If newUserEmail already exists, reply with 400
+
 });
 
 // @jensen recommends "shortid" package
@@ -125,7 +155,6 @@ function findUserById(uid) {
   });
   console.log('Found', username);
 }
-
 
 function findUser(username, inputCode) {
   // find() returns value of first element  array that satisfies provided testing function
