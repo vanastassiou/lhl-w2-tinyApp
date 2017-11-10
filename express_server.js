@@ -52,9 +52,9 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
-    username: req.cookies.username
+    username: req.cookies.username,
+    loggedIn: (req.cookies.username) ? true : false
   };
-// Grants the urls_index template access to the value of the templateVars object
   res.render("urls_index", templateVars);
 })
 
@@ -106,18 +106,9 @@ app.post('/login', (req, res) => {
   }
 });
 
-// Login check
-app.get('/', (req, res) => {
-  let loggedIn = false;
-  if (req.cookies.username === true) {
-    let id = req.cookies.username;
-    loggedIn = true;
-  }
-  res.render('index', {loggedIn, admin});
-});
 
 app.post('/Logout', (req, res) => {
-  res.clearCookie(username);
+  res.clearCookie("username");
   res.redirect('/urls');
 });
 
