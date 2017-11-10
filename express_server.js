@@ -1,29 +1,47 @@
 // Importing modules
 
-const express = require("express");
-const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
+// cookie-parser not so great for sessions
+const cookieParser = require('cookie-parser');
+// Attaches the "session" to req, providing an object representing the loaded session
+//const cookieSession = require('cookie-session');
+const express = require('express');
+const bodyParser = require('body-parser');
+//const bcrypt = require('bcrypt');
 const app = express();
 const PORT = process.env.PORT || 8080; // default port 8080
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+const userDatabase = [
+  {
+    "name" : "Weebl",
+    "uid": "1",
+    "password": "1234"
+  },
+  {
+    "name": "Bob",
+    "uid": "2",
+    "password": "stringypassword75"
+  },
+
+]
 
 // Calling middleware
 
-app.set("view engine", "ejs")
+app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
-
+//app.use(cookieSession({
+//   keys: ["whatevs"]
+// }))
 
 // Route definitions to follow
 
 app.get("/", (req, res) => {
   res.end("This is the root directory of the website. You should go elsewhere...BUT WHERE??");
-  res.redirect(longURL);
 });
-
 
 // Spits out urlDatabase object contents in JSON format.
 app.get("/urls.json", (req, res) => {
@@ -32,7 +50,11 @@ app.get("/urls.json", (req, res) => {
 // Congratulatons! You just made an API!
 
 app.get("/urls", (req, res) => {
-  let templateVars = {urls: urlDatabase};
+  let templateVars = {
+    urls: urlDatabase,
+    username: req.cookies.username
+  };
+// Grants the urls_index template access to the value of the templateVars object
   res.render("urls_index", templateVars);
 })
 
@@ -71,14 +93,31 @@ app.post("/urls/:id", (req, res) => {
   res.redirect("/urls");
 });
 
-//Modify routes on server in to render templates properly.
-// Pass username to each EJS template to verify user is logged in and what username is
-
+// Support for login cookie
 app.post('/login', (req, res) => {
   const username = req.body.username;
   const inputPass = req.body.inputPass;
-  res.cookie('username', username);
-  console.log;
+  const user = findUser(username, inputPass);
+  if (user) {
+    res.cookie("username", user.name);
+    res.redirect('/urls');
+  } else {
+    res.redirect('login');
+  }
+});
+
+// Login check
+app.get('/', (req, res) => {
+  let loggedIn = false;
+  if (req.cookies.username === true) {
+    let id = req.cookies.username;
+    loggedIn = true;
+  }
+  res.render('index', {loggedIn, admin});
+});
+
+app.post('/Logout', (req, res) => {
+  res.clearCookie(username);
   res.redirect('/urls');
 });
 
@@ -86,6 +125,23 @@ app.post('/login', (req, res) => {
 function generateRandomString() {
   let result = Math.random().toString(36).substring(2,8);
   return result;
+}
+
+function findUserById(uid) {
+  // find() returns value of first element of array that satisfies provided testing function
+  return userDatabase.find(function (user) {
+    return user.uid === uid;
+  });
+  console.log('Found', username);
+}
+
+
+function findUser(username, inputCode) {
+  // find() returns value of first element  array that satisfies provided testing function
+  return userDatabase.find((user) =>
+    user.name === username && user.password === inputCode
+  );
+  console.log('Found', username);
 }
 
 app.listen(PORT, () => {

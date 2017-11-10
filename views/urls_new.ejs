@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-<header>
+<head>
+</head>
+<body style="font-size:20px; padding:50px;">
+  <header>
     <% include partials/_header %>
-    <p>Nice to see you around, <%= username%>!</p>
-</header>
-  <body style="font-size:20px; padding:50px;">
-    <% include partials/_header %>
+  </header>
     <form action="/urls" method="POST" style="margin:150px;">
       <label for="longURL">Enter a URL:</label>
-      <input id="longURL" type="text" name="longURL" placeholder="http://..."">
+      <input id="longURL" type="text" name="longURL" placeholder="http://...">
       <input type="submit" value="Submit">
     </form>
-  </body>
+</body>
 </html>
