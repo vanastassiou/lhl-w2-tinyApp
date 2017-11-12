@@ -47,12 +47,20 @@ app.get("/urls", (req, res) => {
 })
 
 app.get("/urls/new", (req, res) => {
+  // const inputPass = req.body.inputPass;
+  // const user =  checkCredentials(inputEmail, inputPass);
   let templateVars = {
-    user: checkCredentials(),
+    // user: checkCredentials(),
+    user_id: req.cookies.user_id,
     loggedIn: (req.cookies.user_id) ? true : false
   };
-  res.render("urls_new", templateVars);
-})
+  // const inputEmail = req.body.username;
+  if (!req.cookies.user_id) {
+    res.redirect('/login');
+  } else {
+    res.render("urls_new", templateVars);
+  }
+});
 
 app.get("/urls/:id", (req, res) => {
   let templateVars = { shortURL: req.params.id };
