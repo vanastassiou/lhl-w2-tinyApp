@@ -4,9 +4,8 @@
   <header>
       <% include partials/_header %>
   </header>
-  <h1>Check out this sweet TinyURL clone</h1>
-  <p>(We definitely need more of these.)</p>
-  <ul>Here's what we're keeping track of for you:
+  <p>
+  <ul>Here's what we're shortifying for you:
     <% for (var key in urls) { %>
         <li><%= key %> - <%= urls[key] %>
           <a href="/urls/<%= key %>">Edit</a>
@@ -16,5 +15,6 @@
         </li>
     <% }; %>
   </ul>
+  <p>
 </body>
 </html>

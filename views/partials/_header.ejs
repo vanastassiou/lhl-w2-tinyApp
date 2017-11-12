@@ -1,9 +1,8 @@
-<!-- Modify your _header.ejs to display a "Register" link (pointing to the registration page) and a "Login" link (pointing to the login page) for users that are not logged in. -->
 <div class="navbar-header">
-  <h1>Shorten that URL! This means you!</h1>
+  <h1>URL Shortifyer</h1>
   <% if (loggedIn) { %>
-    <p>Hey there, <%= username %>!
-    <form method="POST" action ="/Logout"> <button type="submit">Log out</button> </form>
+    <p>Welcome back, <%= username %>!
+    <form method="POST" action ="/logout"> <button type="submit">Log out</button> </form>
     </p>
   <% } else { %>
     <form action="/login" method="POST">
@@ -16,5 +15,6 @@
       </p>
       <input type="submit" value="sup">
     </form>
+    <p>New here? <a href="./register">Sign up</a>!<p>
   <% } %>
 </div>
