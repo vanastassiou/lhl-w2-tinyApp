@@ -1,20 +1,11 @@
 <div class="navbar-header">
   <h1>URL Shortifyer</h1>
   <% if (loggedIn) { %>
-    <p>Welcome back, <%= username %>!
+    <p>Welcome back, <%= user_id %>!
     <form method="POST" action ="/logout"> <button type="submit">Log out</button> </form>
     </p>
   <% } else { %>
-    <form action="/login" method="POST">
-      <p>
-        <label for="username">Who dis?</label>
-        <input type="text" id="username" name="username" placeholder="Identify yourself!"<br>
-        <br>
-        <label for="code">Prove it: </label>
-        <input type="password" id="inputPass" name="inputPass" placeholder="Show your creds" /><br>
-      </p>
-      <input type="submit" value="sup">
-    </form>
-    <p>New here? <a href="./register">Sign up</a>!<p>
+    <p>Already registered? <a href="./login">Log in</a>!<p>
+    <p>New here? <a href="./register">Register</a>!<p>
   <% } %>
 </div>

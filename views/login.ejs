@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<head>
+</head>
+<body>
+  <header>
+    <% include partials/_header %>
+  </header>
+  <h1>Log in</h1>
+  <p>
+    <form action="/login" method="POST">
+      <p>
+        <label for="username">E-mail address:</label>
+        <input type="text" id="username" name="username" placeholder="E-mail address"><br>
+        <br>
+        <label for="code">Password: </label>
+        <input type="password" id="inputPass" name="inputPass" placeholder="Password"><br>
+      </p>
+      <input type="submit" value="Submit">
+    </form>
+
+  </p>
+</body>
+</html>

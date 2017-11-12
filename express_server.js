@@ -11,17 +11,15 @@ const urlDatabase = {
 
 const userDatabase = [
   {
-    "name" : "Weebl",
-    "uid": "1",
-    "password": "1234",
-    "email": "weebl@weebl.com"
+    uid: "1",
+    email: "weebl@weebl.com",
+    password: "1234"
   },
   {
-    "name": "Bob",
-    "uid": "2",
-    "password": "stringypassword75",
-    "email" : "bob@weebl.com"
-  },
+    uid: "2",
+    email: "bob@weebl.com",
+    password: "stringypassword75"
+  }
 ];
 
 app.set('view engine', 'ejs');
@@ -41,16 +39,17 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
-    username: req.cookies.username,
-    loggedIn: (req.cookies.username) ? true : false
+    // user: checkCredentials(),
+    user_id: req.cookies.user_id,
+    loggedIn: (req.cookies.user_id) ? true : false
   };
   res.render("urls_index", templateVars);
 })
 
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-    username: req.cookies.username,
-    loggedIn: (req.cookies.username) ? true : false
+    user: checkCredentials(),
+    loggedIn: (req.cookies.user_id) ? true : false
   };
   res.render("urls_new", templateVars);
 })
@@ -59,11 +58,21 @@ app.get("/urls/:id", (req, res) => {
   let templateVars = { shortURL: req.params.id };
   res.render("urls_show", templateVars);
 });
+
 app.get("/u/:shortURL", (req, res) => {
   //req.params: a property that is an object containing properties mapped to “params”. E.g. given route /user/:name, “name” property of the object is available as req.params.name. Defaults to {}.
   let longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
+
+app.get("/login", (req, res) => {
+  let templateVars = {
+    urls: urlDatabase,
+    user: checkCredentials(),
+    loggedIn: (req.cookies.user_id) ? true : false
+  };
+  res.render("login", templateVars);
+})
 
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
@@ -76,32 +85,39 @@ app.post("/urls/:id", (req, res) => {
   res.redirect("/urls");
 });
 
-app.post('/login', (req, res) => {
-  const username = req.body.username;
+app.post("/login", (req, res) => {
+  const inputEmail = req.body.username;
   const inputPass = req.body.inputPass;
-  const user =  checkIfUserExists(username, inputPass);
+  const user =  checkCredentials(inputEmail, inputPass);
   if (user) {
-    res.cookie("username", user.name);
+    res.cookie("user_id", user.email);
     res.redirect('/urls');
   } else {
-    res.redirect('/login');
+    res.status(403);
+    res.send("Incorrect username or password.");
+    res.redirect('/');
   }
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect('/urls');
 });
 //
 app.get("/register", (req, res) => {
-  res.render("register");
+  let templateVars = {
+    urls: urlDatabase,
+    user: checkCredentials(),
+    loggedIn: (req.cookies.user_id) ? true : false
+  };
+  res.render("register", templateVars);
 });
 
 app.post("/register", (req, res) => {
   if ((req.body.email.length < 1) || (req.body.password.length < 1)) {
     res.status(400);
     res.send("Sorry, I can't create an account with no email or password.");
-  } else if (req.body.email == findExistingUserByEmail(req.body.email)) {
+  } else if (findExistingUserByEmail(req.body.email)) {
     res.status(400);
     res.send("Sorry, this user has already been registered.");
   } else {
@@ -122,26 +138,23 @@ function generateRandomString() {
 };
 
 function findExistingUserById(uid) {
-  // find() returns value of first element of array that satisfies provided testing function
   return userDatabase.find(function (input) {
     return input.uid === uid;
   });
-  console.log('Found', username);
 };
 
-function checkIfUserExists(username, inputCode) {
+function checkCredentials(inputEmail, inputCode) {
   return userDatabase.find((input) =>
-    input.name === username && input.password === inputCode
+    input.email === inputEmail && input.password === inputCode
   );
-  console.log('Found', username);
 };
 
 function findExistingUserByEmail(email) {
   return userDatabase.find((input) =>
     input.email === email
   );
-  console.log('Found', email);
 };
+
 
 app.listen(PORT, () => {
   console.log(`TinyURL clone now listening on port ${PORT}.`);
