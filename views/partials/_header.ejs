@@ -1,7 +1,7 @@
 <div class="navbar-header">
   <h1>URL Shortifyer</h1>
   <% if (loggedIn) { %>
-    <p>Welcome back, <%= user_id %>!
+    <p>You are logged in as <%= user_id %>.
     <form method="POST" action ="/logout"> <button type="submit">Log out</button> </form>
     </p>
   <% } else { %>

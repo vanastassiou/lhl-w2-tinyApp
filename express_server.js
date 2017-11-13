@@ -5,18 +5,24 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {
+    longURL: "http://www.lighthouselabs.ca",
+    userId: "1"
+  },
+  "9sm5xK": {
+    longURL: "http://www.google.com",
+    userId: "2"
+  }
 };
 
 const userDatabase = [
   {
-    uid: "1",
+    userId: "1",
     email: "weebl@weebl.com",
     password: "1234"
   },
   {
-    uid: "2",
+    userId: "2",
     email: "bob@weebl.com",
     password: "stringypassword75"
   }
@@ -47,14 +53,10 @@ app.get("/urls", (req, res) => {
 })
 
 app.get("/urls/new", (req, res) => {
-  // const inputPass = req.body.inputPass;
-  // const user =  checkCredentials(inputEmail, inputPass);
   let templateVars = {
-    // user: checkCredentials(),
     user_id: req.cookies.user_id,
     loggedIn: (req.cookies.user_id) ? true : false
   };
-  // const inputEmail = req.body.username;
   if (!req.cookies.user_id) {
     res.redirect('/login');
   } else {
@@ -88,8 +90,10 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls");
 });
 
-app.post("/urls/:id", (req, res) => {
-  urlDatabase[req.params.id] = req.body.longURLName;
+app.post("/urls", (req, res) => {
+  let newShortURL = generateRandomString();
+  urlDatabase[newShortURL] = req.body.longURL;
+  urlDatabase[newShortURL][userID] = req.cookies.user_id;
   res.redirect("/urls");
 });
 
@@ -134,7 +138,7 @@ app.post("/register", (req, res) => {
     userDatabase.push(newUserObject);
     //Sets cookie named "user_id" corresponding to the contents of the new user
     res.cookie('user_id', newUserId);
-    console.log('New user registered:', newUserId);
+    console.log('New user registered:', newUserObject.email);
     res.redirect('/urls');
   }
 });
@@ -143,12 +147,6 @@ app.post("/register", (req, res) => {
 function generateRandomString() {
   let result = Math.random().toString(36).substring(2,8);
   return result;
-};
-
-function findExistingUserById(uid) {
-  return userDatabase.find(function (input) {
-    return input.uid === uid;
-  });
 };
 
 function checkCredentials(inputEmail, inputCode) {

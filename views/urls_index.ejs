@@ -4,17 +4,22 @@
   <header>
       <% include partials/_header %>
   </header>
-  <p>
-  <ul>Here's what we're shortifying for you:
-    <% for (var key in urls) { %>
-        <li><%= key %> - <%= urls[key] %>
-          <a href="/urls/<%= key %>">Edit</a>
-          <form method="POST" action="/urls/<%= urls[key] %>/delete">
-            <button type="submit">Delete</button>
-          </form>
-        </li>
-    <% }; %>
-  </ul>
-  <p>
+  <% if (!loggedIn) { %>
+    <p>Log in to shortify URLs.</p>
+  <% } else { %>
+    <p>
+      <ul>Here's what we're shortifying for you:
+        <br>
+        <br>
+      <% for (var key in urls) { %>
+          <li><%= key %> - <%= urls[key] %>
+            <a href="/urls/<%= key %>">Edit</a>
+            <form method="POST" action="/urls/<%= urls[key] %>/delete"> <button type="submit">Delete</button>
+            </form>
+          </li>
+      <% }; %>
+      </ul>
+    <p>
+  <% }; %>
 </body>
 </html>
